@@ -1,0 +1,25 @@
+{
+  "coverage": [
+    "connect-client.js"
+  ],
+  "suites": "test/**/*.spec.js",
+  "environments": ["node"],
+  "browser": {
+    "loader": {"script": "esm"}
+  },
+  "node": {
+    "plugins": ["@babel/register"],
+    "reporters+": ["lcov", "htmlcoverage"]
+  },
+  "instrumenterOptions": {
+    "esModules": true
+  },
+  "plugins": {
+    "script": "test/utils.js",
+    "useLoader": true
+  },
+  "configs": {
+    "ci-public": {},
+    "ci": {}
+  }
+}
