@@ -1,8 +1,5 @@
-# vaadin-connect
-A Vaadin Labs experiment with a secure stateless communication framework
-
-For more information, see the [Vaadin Connect README](https://github.com/vaadin/vaadin-connect)
+# rpc-client
+A simple RPC client example / demo.
 
 ## License
-
 Apache License 2.0
