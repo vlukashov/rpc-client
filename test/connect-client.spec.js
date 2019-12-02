@@ -62,6 +62,42 @@ describe('ConnectClient', () => {
     });
   });
 
+  describe('token', () => {
+    let client;
+    const vaadinEndpoint = '/connect/FooService/fooMethod';
+
+    beforeEach(() => {
+      client = new ConnectClient();
+      fetchMock.post(vaadinEndpoint, {fooData: 'foo'});
+    });
+
+    afterEach(() => {
+      fetchMock.restore();
+    });
+
+    describe('without token', () => {
+      it('should not include Authorization header by default', async() => {
+        await client.call('FooService', 'fooMethod');
+        expect(fetchMock.lastOptions().headers)
+          .to.not.have.property('Authorization');
+      });
+    });
+
+    describe('with token', () => {
+      beforeEach(() => {
+        const token = sinon.fake.returns(
+          Promise.resolve('some-base64-here'));
+        client.token = token;
+      });
+
+      it('should ask for token', async() => {
+        await client.call('FooService', 'fooMethod');
+        expect(client.token).to.be.calledOnce;
+        expect(client.token.lastCall).to.be.calledWithExactly();
+      });
+    });
+  });
+
   describe('call method', () => {
     beforeEach(() => fetchMock
       .post('/connect/FooService/fooMethod', {fooData: 'foo'})

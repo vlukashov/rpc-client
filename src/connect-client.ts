@@ -8,6 +8,11 @@ export interface ConnectClientOptions {
   endpoint?: string;
 
   /**
+   * The `token` property value.
+   */
+  token?: string | (() => Promise<string>);
+
+  /**
    * The `middlewares` property value.
    */
   middlewares?: Middleware[];
@@ -89,6 +94,11 @@ export class ConnectClient {
   middlewares: Middleware[] = [];
 
   /**
+   * An getter for an access token.
+   */
+  token?: () => Promise<string>;
+
+  /**
    * @param options Constructor options.
    */
   constructor(options: ConnectClientOptions = {}) {
@@ -98,6 +108,14 @@ export class ConnectClient {
 
     if (options.middlewares) {
       this.middlewares = options.middlewares;
+    }
+
+    if (options.token) {
+      if (typeof options.token === 'string') {
+        this.token = () => Promise.resolve(options.token as string);
+      } else {
+        this.token = this.token as () => Promise<string>;
+      }
     }
   }
 
@@ -126,6 +144,12 @@ export class ConnectClient {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     };
+
+    if (this.token) {
+      const token = this.token();
+      // tslint:disable-next-line:no-string-literal
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     // Construct a Request instance from arguments
     const request = new Request(
